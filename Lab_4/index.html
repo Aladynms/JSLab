@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikacja Notatnik</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <h1>Notatnik</h1>
+  <form id="noteForm">
+    <label for="title">Tytuł:</label>
+    <input type="text" id="title" required><br>
+    <label for="content">Treść:</label>
+    <textarea id="content" required></textarea><br>
+    <label for="color">Kolor:</label>
+    <input type="color" id="color" value="#ffffff"><br>
+    <button type="submit">Dodaj notatkę</button>
+  </form>
+  <div id="notesList"></div>
+
+  <script src="./js/script.js"></script>
+</body>
+</html>
