@@ -3,32 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Balls</title>
+    <title>Network Animation</title>
     <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
         canvas {
             border: 1px solid black;
-            display: block;
-            margin: 0 auto;
         }
         .controls {
-            text-align: center;
-            margin: 20px;
+            position: absolute;
+            top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="controls">
-        <label for="numBalls">Number of Balls (X): </label>
-        <input type="number" id="numBalls" value="10">
-        <label for="distance">Distance (Y): </label>
-        <input type="number" id="distance" value="100">
-        <label for="force">Force (for version 2): </label>
-        <input type="number" id="force" value="1">
-        <button onclick="start()">Start</button>
-        <button onclick="reset()">Reset</button>
+        <button id="startBtn">Start</button>
+        <button id="resetBtn">Reset</button>
+        <label>
+            Force:
+            <input type="range" id="forceRange" min="0.1" max="5" step="0.1" value="1">
+        </label>
+        <label>
+            X (Speed Factor):
+            <input type="range" id="xRange" min="0.5" max="10" step="0.1" value="1">
+        </label>
+        <label>
+            Y (Mass Factor):
+            <input type="range" id="yRange" min="0.1" max="5" step="0.1" value="1">
+        </label>
     </div>
-    <canvas id="canvas" width="800" height="600"></canvas>
-
+    <canvas id="networkCanvas"></canvas>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,127 +1,176 @@
-const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('networkCanvas');
 const ctx = canvas.getContext('2d');
 
-let balls = [];
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const forceRange = document.getElementById('forceRange');
+const xRange = document.getElementById('xRange');
+const yRange = document.getElementById('yRange');
+
 let animationFrameId;
-let numBalls = 10;
-let maxDistance = 100;
-let force = 1;
+let isRunning = false;
+let force = parseFloat(forceRange.value);
+let xFactor = parseFloat(xRange.value);
+let yFactor = parseFloat(yRange.value);
+let mouseX = 0;
+let mouseY = 0;
+let mouseDown = false;
+let mouseButton = null;
 
-const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-class Ball {
-    constructor(x, y, dx, dy, radius) {
+class Node {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.dx = dx;
-        this.dy = dy;
-        this.radius = radius;
+        this.size = Math.random() * 10 + 5;
+        this.vx = (Math.random() * 2 - 1) / this.size;
+        this.vy = (Math.random() * 2 - 1) / this.size;
+    }
+
+    update() {
+        this.x += this.vx * xFactor;
+        this.y += this.vy * xFactor;
+
+        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+        if (this.size < 1) {
+            this.size = 0;
+        }
     }
 
     draw() {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'blue';
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
     }
 
-    update() {
-        if (this.x + this.dx > canvas.width - this.radius || this.x + this.dx < this.radius) {
-            this.dx = -this.dx;
-        }
-        if (this.y + this.dy > canvas.height - this.radius || this.y + this.dy < this.radius) {
-            this.dy = -this.dy;
-        }
-        this.x += this.dx;
-        this.y += this.dy;
+    getEnergy() {
+        return this.size * (xFactor * Math.sqrt(this.vx ** 2 + this.vy ** 2) + yFactor * this.size);
     }
 }
+
+function distance(node1, node2) {
+    return Math.sqrt(Math.pow(node1.x - node2.x, 2) + Math.pow(node1.y - node2.y, 2));
+}
+
+let nodes = [];
+const maxDistance = 100;
+const nodeCount = 100;
 
 function init() {
-    balls = [];
-    for (let i = 0; i < numBalls; i++) {
-        let radius = getRandomInt(10, 20);
-        let x = getRandomInt(radius, canvas.width - radius);
-        let y = getRandomInt(radius, canvas.height - radius);
-        let dx = getRandomInt(-2, 2);
-        let dy = getRandomInt(-2, 2);
-        balls.push(new Ball(x, y, dx, dy, radius));
+    nodes.length = 0;
+    for (let i = 0; i < nodeCount; i++) {
+        nodes.push(new Node(Math.random() * canvas.width, Math.random() * canvas.height));
     }
 }
 
-function drawLines() {
-    for (let i = 0; i < balls.length; i++) {
-        for (let j = i + 1; j < balls.length; j++) {
-            let distance = Math.hypot(balls[i].x - balls[j].x, balls[i].y - balls[j].y);
-            if (distance < maxDistance) {
-                ctx.beginPath();
-                ctx.moveTo(balls[i].x, balls[i].y);
-                ctx.lineTo(balls[j].x, balls[j].y);
-                ctx.strokeStyle = 'red';
-                ctx.stroke();
-                ctx.closePath();
+function applyMouseForce() {
+    if (mouseDown) {
+        nodes.forEach(node => {
+            const dist = distance({ x: mouseX, y: mouseY }, node);
+            if (dist < maxDistance) {
+                const angle = Math.atan2(node.y - mouseY, node.x - mouseX);
+                const strength = force / dist;
+
+                if (mouseButton === 0) {
+                    node.vx += Math.cos(angle) * strength;
+                    node.vy += Math.sin(angle) * strength;
+                } else if (mouseButton === 2) {
+                    node.vx -= Math.cos(angle) * strength;
+                    node.vy -= Math.sin(angle) * strength;
+                }
             }
-        }
+        });
     }
 }
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    balls.forEach(ball => {
-        ball.update();
-        ball.draw();
+
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            if (distance(nodes[i], nodes[j]) < maxDistance) {
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x, nodes[i].y);
+                ctx.lineTo(nodes[j].x, nodes[j].y);
+                ctx.stroke();
+                ctx.closePath();
+
+                if (nodes[i].size > 0 && nodes[j].size > 0) {
+                    let energyTransfer = Math.min(nodes[i].getEnergy(), nodes[j].getEnergy()) / 150;
+                    if (nodes[i].getEnergy() > nodes[j].getEnergy()) {
+                        nodes[i].size += energyTransfer;
+                        nodes[j].size -= energyTransfer;
+                    } else {
+                        nodes[i].size -= energyTransfer;
+                        nodes[j].size += energyTransfer;
+                    }
+                }
+            }
+        }
+    }
+
+    applyMouseForce();
+
+    nodes.forEach(node => {
+        node.update();
+        node.draw();
     });
-    drawLines();
+
+    nodes = nodes.filter(node => node.size >= 1); 
+
     animationFrameId = requestAnimationFrame(animate);
 }
 
-function start() {
-    numBalls = parseInt(document.getElementById('numBalls').value);
-    maxDistance = parseInt(document.getElementById('distance').value);
-    force = parseInt(document.getElementById('force').value);
+function startAnimation() {
+    if (!isRunning) {
+        isRunning = true;
+        animate();
+    }
+}
+
+function resetAnimation() {
+    if (isRunning) {
+        cancelAnimationFrame(animationFrameId);
+        isRunning = false;
+    }
     init();
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-    }
-    animate();
-}
-
-function reset() {
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    balls = [];
+    nodes.forEach(node => node.draw());
 }
 
-canvas.addEventListener('mousemove', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    balls.forEach(ball => {
-        const distance = Math.hypot(ball.x - mouseX, ball.y - mouseY);
-        if (distance < maxDistance) {
-            const angle = Math.atan2(ball.y - mouseY, ball.x - mouseX);
-            ball.dx += force * Math.cos(angle);
-            ball.dy += force * Math.sin(angle);
-        }
-    });
+startBtn.addEventListener('click', startAnimation);
+resetBtn.addEventListener('click', resetAnimation);
+forceRange.addEventListener('input', () => {
+    force = parseFloat(forceRange.value);
+});
+xRange.addEventListener('input', () => {
+    xFactor = parseFloat(xRange.value);
+});
+yRange.addEventListener('input', () => {
+    yFactor = parseFloat(yRange.value);
 });
 
-canvas.addEventListener('click', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    for (let i = 0; i < balls.length; i++) {
-        const distance = Math.hypot(balls[i].x - mouseX, balls[i].y - mouseY);
-        if (distance < balls[i].radius) {
-            balls.splice(i, 1);
-            balls.push(new Ball(getRandomInt(20, canvas.width - 20), getRandomInt(20, canvas.height - 20), getRandomInt(-2, 2), getRandomInt(-2, 2), getRandomInt(10, 20)));
-            balls.push(new Ball(getRandomInt(20, canvas.width - 20), getRandomInt(20, canvas.height - 20), getRandomInt(-2, 2), getRandomInt(-2, 2), getRandomInt(10, 20)));
-            break;
-        }
-    }
+canvas.addEventListener('mousedown', event => {
+    mouseDown = true;
+    mouseButton = event.button;
 });
 
-start();
+canvas.addEventListener('mouseup', () => {
+    mouseDown = false;
+    mouseButton = null;
+});
+
+canvas.addEventListener('mousemove', event => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = event.clientX - rect.left;
+    mouseY = event.clientY - rect.top;
+});
+
+canvas.addEventListener('contextmenu', event => event.preventDefault());
+
+init();
