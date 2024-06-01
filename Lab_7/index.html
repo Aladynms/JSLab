@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Balls</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label for="numBalls">Number of Balls (X): </label>
+        <input type="number" id="numBalls" value="10">
+        <label for="distance">Distance (Y): </label>
+        <input type="number" id="distance" value="100">
+        <label for="force">Force (for version 2): </label>
+        <input type="number" id="force" value="1">
+        <button onclick="start()">Start</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
