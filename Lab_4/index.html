@@ -8,6 +8,7 @@
 </head>
 <body>
   <h1>Notatnik</h1>
+  <div id="search"><input type="text" id="searchInput" placeholder="Wyszukaj notatki"></div>
   <form id="noteForm">
     <label for="title">Tytuł:</label>
     <input type="text" id="title" required><br>
@@ -15,7 +16,10 @@
     <textarea id="content" required></textarea><br>
     <label for="color">Kolor:</label>
     <input type="color" id="color" value="#ffffff"><br>
-    <button type="submit">Dodaj notatkę</button>
+    <input type="hidden" id="noteIndex" value=""><br>
+    <button type="submit" id="addButton">Dodaj notatkę</button>
+    <button type="button" id="saveButton" style="display: none;">Zapisz</button>
+    <button type="button" id="cancelButton" style="display: none;">Anuluj</button>
   </form>
   <div id="notesList"></div>
 

@@ -8,16 +8,40 @@
 </head>
 <body>
     <div id="box">
-        <button id="next">Next</button>
         <button id="prev">Prev</button>
+        <button id="next">Next</button>
         <div id="anim">
-            <img src="img/img1.jpg" alt="wiosna">
-            <img src="img/img2.jpg" alt="lato">
-            <img src="img/img3.jpg" alt="jesien">
-            <img src="img/img4.jpg" alt="zima">
+            <div class="slide">
+                <img src="img/img1.jpg" alt="wiosna">
+                <p>Wiosna</p>
+            </div>
+            <div class="slide">
+                <img src="img/img2.jpg" alt="lato">
+                <p>Lato</p>
+            </div>
+            <div class="slide">
+                <img src="img/img3.jpg" alt="jesien">
+                <p>Jesień</p>
+            </div>
+            <div class="slide">
+                <img src="img/img4.jpg" alt="zima">
+                <p>Zima</p>
+            </div>
+            <div class="slide">
+                <h1>TEXT SLIDER</h1>
+                <p>TEXT</p>
+            </div>
         </div>
         <div id="but">
-
+            <button id="pause">Pause</button>
+            <button id="toggle-anim">Toggle Anim</button>
+        </div>
+    </div>
+    <div id="lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <span class="close">&times;</span>
+            <img class="lightbox-image">
+            <video class="lightbox-video" controls></video>
         </div>
     </div>
     <script src="js/script.js"></script>

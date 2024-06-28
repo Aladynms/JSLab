@@ -8,24 +8,36 @@
 </head>
 <body>
     <div id="drumkit">
-        <audio src="./sounds/clap.wav" controls id="clap" data-key="z"></audio>
-        <audio src="./sounds/hihat.wav" controls id="hihat" data-key="x"></audio>
-        <audio src="./sounds/boom.wav" controls id="boom" data-key="c"></audio>
+        <div class="audio-container">
+            <audio src="./sounds/clap.wav" id="clap" data-key="z" controls></audio>
+            <p>Key: Z</p>
+        </div>
+        <div class="audio-container">
+            <audio src="./sounds/hihat.wav" id="hihat" data-key="x" controls></audio>
+            <p>Key: X</p>
+        </div>
+        <div class="audio-container">
+            <audio src="./sounds/boom.wav" id="boom" data-key="c" controls></audio>
+            <p>Key: C</p>
+        </div>
+        <div class="audio-container">
+            <audio src="./sounds/kick.wav" id="kick" data-key="v" controls></audio>
+            <p>Key: V</p>
+        </div>
+        <div class="audio-container">
+            <audio src="./sounds/snare.wav" id="snare" data-key="b" controls></audio>
+            <p>Key: B</p>
+        </div>
     </div>
 
-    <button id="record">Record</button>
-    <button id="play">Play</button>
-    <button id="stop">Stop</button>
+    <button id="playAll">Play All</button>
     <button id="clear">Clear</button>
     <button id="metronomeToggle">Metronome On/Off</button>
     <input type="number" id="bpm" placeholder="BPM">
     <button id="changeBpm">Change BPM</button>
     <button id="addChannel">Add Channel</button>
-    <button class="removeChannel">Remove Channel</button>
 
-    <div id="channelsContainer">
-        
-    </div>
+    <div id="channelsContainer"></div>
 
     <script src="./js/script.js"></script>
 </body>

@@ -9,6 +9,11 @@ body {
     text-align: center;
     margin-top: 20px;
   }
+  
+  #search {
+    max-width: 500px;
+    margin: auto;
+}
 
   #noteForm {
     max-width: 500px;

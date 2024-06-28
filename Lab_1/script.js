@@ -20,6 +20,8 @@ function delN()
     DivNumbers.removeChild(input); 
 
     checkN(count-1);
+
+    sum();
 }
 
 function checkN(count)
@@ -56,4 +58,10 @@ function sum()
     document.querySelector("#resultAvg").innerHTML = resultAvg;
     document.querySelector("#resultMin").innerHTML = resultMin;
     document.querySelector("#resultMax").innerHTML = resultMax;
+}
+
+function autoSum() {
+    document.addEventListener('keyup', function(event) {
+        sum();
+    });
 }
